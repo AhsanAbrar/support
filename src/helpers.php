@@ -1,5 +1,7 @@
 <?php
 
+use AhsanDev\Support\Vite;
+
 if (! function_exists('option')) {
     /**
      * Get / set the specified option value.
