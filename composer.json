@@ -1,0 +1,37 @@
+{
+    "name": "ahsanabrar/support",
+    "description": "My Development Supportive Package.",
+    "keywords": [
+        "laravel",
+        "admin"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Muhammad Ahsan Abrar",
+            "email": "iahsanabrar@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0.2",
+        "illuminate/support": "^9.31"
+    },
+    "require-dev": {
+        "mockery/mockery": "^1.5",
+        "orchestra/testbench": "^7.7",
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "AhsanDev\\Support\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
