@@ -29,6 +29,13 @@
             "src/helpers.php"
         ]
     },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AhsanDev\\Support\\Authorization\\AuthorizationServiceProvider"
+            ]
+        }
+    },
     "config": {
         "sort-packages": true
     },
