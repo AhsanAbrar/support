@@ -2,7 +2,7 @@
 
 namespace AhsanDev\Support\Authorization\Http\Controllers;
 
-use App\Support\Authorization\AuthorizesRequests;
+use AhsanDev\Support\Authorization\AuthorizesRequests;
 use Illuminate\Routing\ControllerMiddlewareOptions;
 
 class AuthorizeController

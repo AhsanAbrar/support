@@ -2,7 +2,7 @@
 
 namespace AhsanDev\Support\Filters;
 
-use App\Support\Helper;
+use AhsanDev\Support\Helper;
 use JsonSerializable;
 
 abstract class Filter implements JsonSerializable

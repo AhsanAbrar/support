@@ -3,7 +3,7 @@
 namespace AhsanDev\Support\Authorization;
 
 use App\Models\Permission;
-use App\Support\Authorization\Exceptions\PermissionDoesNotExist;
+use AhsanDev\Support\Authorization\Exceptions\PermissionDoesNotExist;
 use Illuminate\Cache\CacheManager;
 use Illuminate\Contracts\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Access\Gate;
