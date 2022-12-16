@@ -49,9 +49,9 @@ class Vite
         $manifest = $manifests[$manifestPath];
 
         return new HtmlString(
-            $this->getScripts(array_values($manifest)[0], $manifestDirectory).
+            $this->getScripts($manifest['js/'.$file], $manifestDirectory).
             $this->getVendors($manifest, $manifestDirectory).
-            $this->getStyles(array_values($manifest)[0], $manifestDirectory)
+            $this->getStyles($manifest['js/'.$file], $manifestDirectory)
         );
     }
 
