@@ -13,13 +13,13 @@
         }
     ],
     "require": {
-        "php": "^8.0.2",
-        "illuminate/support": "^9.31"
+        "php": "^8.0|^8.1",
+        "illuminate/support": "^9.21|^10.0"
     },
     "require-dev": {
         "mockery/mockery": "^1.5",
-        "orchestra/testbench": "^7.7",
-        "phpunit/phpunit": "^9.5"
+        "orchestra/testbench": "^8.0",
+        "phpunit/phpunit": "^10.0"
     },
     "autoload": {
         "psr-4": {
