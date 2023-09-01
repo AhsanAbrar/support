@@ -17,9 +17,10 @@
         "illuminate/support": "^9.21|^10.0"
     },
     "require-dev": {
-        "mockery/mockery": "^1.5",
-        "orchestra/testbench": "^8.0",
-        "phpunit/phpunit": "^10.0"
+        "orchestra/testbench": "^8.10",
+        "pestphp/pest": "^2.16",
+        "pestphp/pest-plugin-laravel": "^2.2",
+        "phpunit/phpunit": "^10.3"
     },
     "autoload": {
         "psr-4": {
@@ -28,6 +29,11 @@
         "files": [
             "src/helpers.php"
         ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "AhsanDev\\Support\\Tests\\": "tests/"
+        }
     },
     "extra": {
         "laravel": {
@@ -38,7 +44,10 @@
         }
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true
