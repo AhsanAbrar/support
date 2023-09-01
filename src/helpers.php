@@ -1,6 +1,7 @@
 <?php
 
 use AhsanDev\Support\Vite;
+use AhsanDev\Support\Contracts\Option as OptionContract;
 
 if (! function_exists('option')) {
     /**
@@ -9,20 +10,20 @@ if (! function_exists('option')) {
      * If an array is passed as the key, we will assume you want to set an array of values.
      *
      * @param  array|string|null  $key
-     * @param  mixed  $default
-     * @return mixed|\App\Models\Option
+     * @param  array|string|null  $default
+     * @return mixed|\AhsanDev\Support\Option
      */
-    function option($key = null, $default = null)
+    function option(string|array $key = null, string|array $default = null)
     {
-        $option = app('\App\Models\Option');
-
-        if (is_array($key)) {
-            $option->set($key);
-        } elseif (! is_null($key)) {
-            return $option->get($key, $default);
+        if (is_null($key)) {
+            return app(OptionContract::class);
         }
 
-        return $option;
+        if (is_array($key)) {
+            return app(OptionContract::class)->put($key);
+        }
+
+        return app(OptionContract::class)->get($key, $default);
     }
 }
 
