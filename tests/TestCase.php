@@ -1,11 +1,14 @@
 <?php
 
-namespace AhsanDev\Support\Tests;
+namespace Tests;
 
-use Orchestra\Testbench\Concerns\WithWorkbench;
-use Orchestra\Testbench\TestCase as Orchestra;
+use AhsanDev\Support\SupportServiceProvider;
+use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
-abstract class TestCase extends Orchestra
+abstract class TestCase extends OrchestraTestCase
 {
-    use WithWorkbench;
+    protected function getPackageProviders($app)
+    {
+        return [SupportServiceProvider::class];
+    }
 }

@@ -1,7 +1,5 @@
 <?php
 
-use AhsanDev\Support\Tests\TestCase;
-
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -13,7 +11,7 @@ use AhsanDev\Support\Tests\TestCase;
 |
 */
 
-uses(TestCase::class)->in('Unit');
+uses(Tests\TestCase::class)->in('Unit');
 
 /*
 |--------------------------------------------------------------------------
