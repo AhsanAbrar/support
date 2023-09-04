@@ -2,7 +2,6 @@
 
 namespace AhsanDev\Support\Facades;
 
-use AhsanDev\Support\Contracts\Option as OptionContract;
 use Illuminate\Support\Facades\Facade;
 
 /**
@@ -18,6 +17,6 @@ class Option extends Facade
      */
     protected static function getFacadeAccessor(): string
     {
-        return OptionContract::class;
+        return 'option';
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
 use AhsanDev\Support\Vite;
-use AhsanDev\Support\Contracts\Option as OptionContract;
 
 if (! function_exists('option')) {
     /**
@@ -16,14 +15,14 @@ if (! function_exists('option')) {
     function option(string|array $key = null, string|array $default = null)
     {
         if (is_null($key)) {
-            return app(OptionContract::class);
+            return app('option');
         }
 
         if (is_array($key)) {
-            return app(OptionContract::class)->put($key);
+            return app('option')->put($key);
         }
 
-        return app(OptionContract::class)->get($key, $default);
+        return app('option')->get($key, $default);
     }
 }
 

@@ -2,7 +2,6 @@
 
 namespace AhsanDev\Support;
 
-use AhsanDev\Support\Contracts\Option as OptionContract;
 use AhsanDev\Support\Option;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
@@ -14,7 +13,7 @@ class SupportServiceProvider extends ServiceProvider implements DeferrableProvid
      */
     public function register(): void
     {
-        $this->app->singleton(OptionContract::class, fn () => new Option);
+        $this->app->singleton('option', fn () => new Option);
     }
 
     /**
@@ -33,7 +32,7 @@ class SupportServiceProvider extends ServiceProvider implements DeferrableProvid
      */
     public function provides(): array
     {
-        return [OptionContract::class];
+        return ['option'];
     }
 
     /**
