@@ -15,15 +15,15 @@ class Option implements OptionContract
      */
     public function get(string $key, mixed $default = null): mixed
     {
-        return Cache::rememberForever($this->getCacheKey($key), function () use ($key, $default) {
+        $value = Cache::rememberForever($this->getCacheKey($key), function () use ($key) {
             $option = DB::table('options')->whereKey($key)->first();
 
             if ($option) {
                 return $this->parseValue($option->value);
             }
-
-            return $default;
         });
+
+        return $value ?? $default;
     }
 
     /**
@@ -41,6 +41,8 @@ class Option implements OptionContract
             foreach ($key as $name => $val) {
                 $this->persist($name, $val);
             }
+
+            return true;
         } else {
             return $this->persist($key, $value);
         }

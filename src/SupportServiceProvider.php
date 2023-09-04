@@ -22,7 +22,8 @@ class SupportServiceProvider extends ServiceProvider implements DeferrableProvid
      */
     public function boot(): void
     {
-        //
+        $this->registerCommands();
+        $this->registerPublishing();
     }
 
     /**
@@ -33,5 +34,29 @@ class SupportServiceProvider extends ServiceProvider implements DeferrableProvid
     public function provides(): array
     {
         return [OptionContract::class];
+    }
+
+    /**
+     * Register the package's publishable resources.
+     */
+    private function registerPublishing(): void
+    {
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/../database/migrations' => database_path('migrations'),
+            ], 'support-migrations');
+        }
+    }
+
+    /**
+     * Register the package's commands.
+     */
+    protected function registerCommands(): void
+    {
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                Console\InstallCommand::class,
+            ]);
+        }
     }
 }
