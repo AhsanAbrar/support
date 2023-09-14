@@ -2,10 +2,11 @@
 
 namespace AhsanDev\Support;
 
+use AhsanDev\Support\Contracts\StaticData as StaticDataContract;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use JsonSerializable;
-use AhsanDev\Support\Contracts\StaticData as StaticDataContract;
 
 class StaticData implements JsonSerializable, StaticDataContract
 {
@@ -19,9 +20,9 @@ class StaticData implements JsonSerializable, StaticDataContract
     /**
      * The default key.
      *
-     * @var string
+     * @var string|null
      */
-    protected string $default = '';
+    protected ?string $defaultKey = null;
 
     /**
      * Get a specific item by its key.
@@ -44,13 +45,11 @@ class StaticData implements JsonSerializable, StaticDataContract
      */
     public function default(): mixed
     {
-        $key = option(key: $this->default, default: $this->default);
+        $key = option(key: $this->getDefaultKey())
+            ?? throw new InvalidArgumentException("Database options key '{$this->getDefaultKey()}' is missing.");
 
-        if (array_key_exists($key, $this->items)) {
-            return $this->items[$key];
-        }
-
-        throw new InvalidArgumentException("Invalid item key: '$key'. This key does not exist in the items array.");
+        return $this->items[$key]
+            ?? throw new InvalidArgumentException("Invalid or undefined item key: '$key'. Item does not exist in the items array.");
     }
 
     /**
@@ -70,6 +69,16 @@ class StaticData implements JsonSerializable, StaticDataContract
                     ->map(fn ($value, $label) => compact('label', 'value'))
                     ->values()
                     ->all();
+    }
+
+    protected function getDefaultKey()
+    {
+        return $this->defaultKey
+            ?? Str::of(get_class($this))
+                ->basename()
+                ->snake()
+                ->prepend('default_')
+                ->value();
     }
 
     /**

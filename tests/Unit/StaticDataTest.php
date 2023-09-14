@@ -7,10 +7,7 @@ use AhsanDev\Support\StaticData;
 beforeEach(function () {
     $this->staticData = new StaticData;
 
-    $reflection = new ReflectionClass($this->staticData);
-
-    $reflection->getProperty('default')
-        ->setValue($this->staticData, 'key2');
+    $this->reflection = $reflection = new ReflectionClass($this->staticData);
 
     $reflection->getProperty('items')
         ->setValue($this->staticData, [
@@ -52,15 +49,21 @@ describe('all', function () {
 });
 
 describe('default', function () {
-    it('returns the default item')
-        ->expect(fn () => $this->staticData->default())
-        ->toBe('value2');
+    it('returns the default item', function () {
+        Option::shouldReceive('get')
+            ->with('default_static_data', null)
+            ->andReturn('key2');
 
-    it('returns the default item mocked', function () {
-        Option::shouldReceive('get')->with('key2', 'key2')->andReturn('key2');
+        expect($this->staticData->default())->toBe('value2');
+    });
 
-        expect($this->staticData->default())
-            ->toBe('value2');
+    it('throws exception when key is missing in options table', function () {
+        Option::shouldReceive('get')
+            ->with('default_static_data', null)
+            ->andReturn(null);
+
+        expect(fn () => $this->staticData->default())
+            ->toThrow(InvalidArgumentException::class);
     });
 
     it('throws exception when default item does not exist')
@@ -73,9 +76,10 @@ describe('random', function () {
         ->expect(fn () => $this->staticData->random())
         ->toBeIn(['value1', 'value2', 'value3']);
 
-    it('throws exception when items array empty')
-        ->expect(fn () => fn () => (new StaticData)->random())
-        ->toThrow(InvalidArgumentException::class);
+    it('throws exception when items array empty', fn () =>
+        expect(fn () => (new StaticData)->random())
+            ->toThrow(InvalidArgumentException::class)
+    );
 
     it('returns an array with specified number of items')
         ->expect(fn () => $this->staticData->random(2))
@@ -90,11 +94,30 @@ describe('random', function () {
     // duplicate test above
     it('preserves keys random pest way', fn () =>
         expect($this->staticData->random(2, true))
-            ->toHaveRandom(2, $this->staticData->all()));
+            ->toHaveRandom(2, $this->staticData->all())
+    );
 });
 
 describe('options', function () {
     it('returns items as options')
         ->expect(fn () => $this->staticData->options()[0])
         ->toHaveExactKeys(['label', 'value']);
+});
+
+describe('default key', function () {
+    it('returns the default key based on the class name', function () {
+        $method = $this->reflection->getMethod('getDefaultKey')->invoke($this->staticData);
+
+        expect($method)->toBe('default_static_data');
+    });
+
+    it('returns the default key when explicitly set', function () {
+        $this->reflection->getProperty('defaultKey')
+            ->setValue($this->staticData, 'my_default_key');
+
+        $method = $this->reflection->getMethod('getDefaultKey')
+            ->invoke($this->staticData);
+
+        expect($method)->toBe('my_default_key');
+    });
 });
