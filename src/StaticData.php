@@ -17,7 +17,7 @@ class StaticData implements JsonSerializable, StaticDataContract
     protected array $items = [];
 
     /**
-     * The default key to be used when retrieving the default item.
+     * The default key.
      *
      * @var string
      */
