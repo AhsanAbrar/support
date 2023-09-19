@@ -51,7 +51,7 @@ class Option implements OptionContract
     /**
      * Persist an option in the database.
      */
-    protected function persist(string $key, string|array $value): bool
+    protected function persist(string $key, null|string|array $value): bool
     {
         $isPersisted = DB::table('options')->updateOrInsert(
             compact('key'),
