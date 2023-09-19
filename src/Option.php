@@ -76,7 +76,7 @@ class Option implements OptionContract
     /**
      * Parse the option value.
      */
-    protected function parseValue(string $value): mixed
+    protected function parseValue(string|null $value): mixed
     {
         return is_array($decoded = json_decode($value, true))
             ? $decoded
