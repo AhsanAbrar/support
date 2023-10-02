@@ -111,10 +111,20 @@ class Vite
                 return $this->isDevelopmentServerRunning;
             }
 
-            return $this->isDevelopmentServerRunning = Http::withOptions([
-                'connect_timeout' => .1,
-            ])->get('http://localhost:'.$port.'/@vite/client')->successful();
+            // First, try to check if the development server is running over HTTPS
+            $response = Http::withOptions([
+                'connect_timeout' => 0.1,
+            ])->get('https://localhost:' . $port . '/@vite/client');
+
+            if ($response->successful()) {
+                return $this->isDevelopmentServerRunning = true;
+            } else {
+                return $this->isDevelopmentServerRunning = Http::withOptions([
+                    'connect_timeout' => .1,
+                ])->get('http://localhost:' . $port . '/@vite/client')->successful();
+            }
         } catch (\Throwable $th) {
+            // Handle any exceptions or errors here if needed
         }
 
         return false;
