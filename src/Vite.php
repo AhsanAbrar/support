@@ -36,7 +36,7 @@ class Vite
 
         static $manifests = [];
 
-        $manifestPath = public_path($manifestDirectory.'/manifest.json');
+        $manifestPath = public_path($manifestDirectory.'/.vite/manifest.json');
 
         if (! isset($manifests[$manifestPath])) {
             if (! is_file($manifestPath)) {
