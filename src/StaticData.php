@@ -74,7 +74,7 @@ class StaticData implements JsonSerializable, StaticDataContract
     protected function getDefaultKey()
     {
         return $this->defaultKey
-            ?? Str::of(class_basename(get_parent_class($this)))
+            ?? Str::of(class_basename(get_class($this)))
                 ->snake()
                 ->prepend('default_')
                 ->value();
