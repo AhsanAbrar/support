@@ -4,6 +4,7 @@ namespace AhsanDev\Support;
 
 use AhsanDev\Support\Option;
 use Illuminate\Contracts\Support\DeferrableProvider;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 
 class SupportServiceProvider extends ServiceProvider implements DeferrableProvider
@@ -23,6 +24,7 @@ class SupportServiceProvider extends ServiceProvider implements DeferrableProvid
     {
         $this->registerCommands();
         $this->registerPublishing();
+        $this->unguardModels();
     }
 
     /**
@@ -57,5 +59,13 @@ class SupportServiceProvider extends ServiceProvider implements DeferrableProvid
                 Console\InstallCommand::class,
             ]);
         }
+    }
+
+    /**
+     * Unguard Eloquent models.
+     */
+    protected function unguardModels(): void
+    {
+        Model::unguard();
     }
 }
