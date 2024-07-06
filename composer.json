@@ -37,6 +37,7 @@
     "extra": {
         "laravel": {
             "providers": [
+                "AhsanDev\\Support\\Authorization\\AuthorizationServiceProvider",
                 "AhsanDev\\Support\\SupportServiceProvider"
             ]
         }
