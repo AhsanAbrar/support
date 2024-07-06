@@ -5,6 +5,7 @@ namespace AhsanDev\Support;
 use AhsanDev\Support\Option;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
 class SupportServiceProvider extends ServiceProvider implements DeferrableProvider
@@ -25,6 +26,10 @@ class SupportServiceProvider extends ServiceProvider implements DeferrableProvid
         $this->registerCommands();
         $this->registerPublishing();
         $this->unguardModels();
+
+        Blade::directive('viteTags', function (string $expression) {
+            return "<?php echo app(AhsanDev\Support\ViteNew::class)($expression); ?>";
+        });
     }
 
     /**
