@@ -4,6 +4,7 @@ namespace AhsanDev\Support\Authorization;
 
 use App\Models\Permission;
 use App\Models\Role;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 trait Authorizable
@@ -98,5 +99,17 @@ trait Authorizable
         }
 
         return (bool) $role->intersect($this->getRoles())->count();
+    }
+
+    /**
+     * Get user permissions
+     */
+    public function allPermissions(): Collection
+    {
+        if ($this->id == 1) {
+            return Permission::pluck('name');
+        }
+
+        return $this->roles->first()->permissions->pluck('name');
     }
 }
