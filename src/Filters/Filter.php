@@ -4,118 +4,92 @@ namespace AhsanDev\Support\Filters;
 
 use AhsanDev\Support\Helper;
 use JsonSerializable;
+use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * Abstract class representing a filter.
+ */
 abstract class Filter implements JsonSerializable
 {
     /**
      * The displayable name of the filter.
-     *
-     * @var string
      */
-    public $name;
+    public string $name;
 
     /**
-     * The attribute / column name of the field.
-     *
-     * @var string
+     * The attribute/column name of the field.
      */
-    public $attribute;
+    public string $attribute;
 
     /**
      * The filter's component.
-     *
-     * @var string
      */
-    public $component = 'filter-select';
+    public string $component = 'filter-select';
 
     /**
-     * The attribute / column name of the field.
-     *
-     * @var string
+     * Indicates if the filter should be displayed horizontally.
      */
-    public $horizontal = false;
+    public bool $horizontal = false;
 
     /**
-     * The meta data for the element.
-     *
-     * @var array
+     * Additional meta data for the element.
      */
-    public $meta = [];
+    public array $meta = [];
 
     /**
      * Apply the filter to the given query.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  mixed  $value
-     * @return \Illuminate\Database\Eloquent\Builder
      */
-    abstract public function apply($query, $value);
+    abstract public function apply(Builder $query, $value): Builder;
 
     /**
      * Get the filter's available options.
-     *
-     * @return array
      */
-    abstract public function options();
+    abstract public function options(): array;
 
     /**
      * Get the component name for the filter.
-     *
-     * @return string
      */
-    public function component()
+    public function component(): string
     {
         return $this->component;
     }
 
     /**
      * Get the displayable name of the filter.
-     *
-     * @return string
      */
-    public function name()
+    public function name(): string
     {
         return $this->name ?: Helper::humanize($this);
     }
 
     /**
      * Get the key for the filter.
-     *
-     * @return string
      */
-    public function key()
+    public function key(): string
     {
         return get_class($this);
     }
 
     /**
      * Set the default options for the filter.
-     *
-     * @return array|mixed
      */
-    public function default()
+    public function default(): string
     {
         return '';
     }
 
     /**
      * Get additional meta information to merge with the element payload.
-     *
-     * @return array
      */
-    public function meta()
+    public function meta(): array
     {
         return $this->meta;
     }
 
     /**
      * Set additional meta information for the element.
-     *
-     * @param  array  $meta
-     * @return $this
      */
-    public function withMeta(array $meta)
+    public function withMeta(array $meta): self
     {
         $this->meta = array_merge($this->meta, $meta);
 
@@ -124,20 +98,26 @@ abstract class Filter implements JsonSerializable
 
     /**
      * Prepare the filter for JSON serialization.
-     *
-     * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return array_merge([
             'name' => $this->name(),
             'attribute' => $this->attribute,
             'component' => $this->component(),
             'horizontal' => $this->horizontal,
-            'options' => collect($this->options())->map(function ($value, $key) {
-                return is_array($value) ? ($value + ['value' => $key]) : ['name' => $key, 'value' => $value];
-            })->values()->all(),
-            'value' => $this->default() ?? '',
+            'options' => $this->formattedOptions(),
+            'value' => $this->default(),
         ], $this->meta());
+    }
+
+    /**
+     * Format the options for JSON serialization.
+     */
+    protected function formattedOptions(): array
+    {
+        return collect($this->options())->map(function ($value, $key) {
+            return is_array($value) ? ($value + ['value' => $key]) : ['name' => $key, 'value' => $value];
+        })->values()->all();
     }
 }
