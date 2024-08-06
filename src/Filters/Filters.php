@@ -47,10 +47,19 @@ class Filters
     {
         $this->builder = $builder;
 
+        // Register default filters
+        foreach ($this->filters as $filter) {
+            if (method_exists($this, $filter)) {
+                $this->filtersArray[$filter] = $this;
+            }
+        }
+
+        // Register additional filters from the filters() method
         foreach ($this->filters() as $filter) {
             $this->filtersArray[$filter->attribute] = $filter;
         }
 
+        // Apply all registered filters
         foreach ($this->getFilters() as $filter => $value) {
             if (method_exists($this, $filter)) {
                 $this->$filter($value);
