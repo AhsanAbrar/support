@@ -2,66 +2,60 @@
 
 namespace AhsanDev\Support\Filters;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
+/**
+ * Class Filters
+ *
+ * Base class for applying filters to an Eloquent query builder.
+ */
 class Filters
 {
     /**
-     * @var Request
+     * The HTTP request instance.
      */
-    protected $request;
+    protected Request $request;
 
     /**
-     * The Eloquent builder.
-     *
-     * @var \Illuminate\Database\Eloquent\Builder
+     * The Eloquent query builder instance.
      */
-    protected $builder;
+    protected Builder $builder;
 
     /**
-     * Registered filters to operate upon.
-     *
-     * @var array
+     * Default filters to operate upon.
      */
-    protected $filters = ['search', 'orderBy'];
+    protected array $filters = ['search', 'orderBy'];
 
     /**
      * Registered filters to operate upon.
-     *
-     * @var array
      */
-    protected $filtersArray = [];
+    protected array $filtersArray = [];
 
     /**
      * Create a new Filters instance.
-     *
-     * @param  Request  $request
      */
-    public function __construct(Request $request = null)
+    public function __construct(Request $request)
     {
         $this->request = $request;
     }
 
     /**
-     * Apply the filters.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $builder
-     * @return \Illuminate\Database\Eloquent\Builder
+     * Apply all relevant filters to the query builder.
      */
-    public function apply($builder)
+    public function apply(Builder $builder): Builder
     {
         $this->builder = $builder;
 
         foreach ($this->filters() as $filter) {
-            $this->filters[] = $filter->attribute;
             $this->filtersArray[$filter->attribute] = $filter;
         }
 
         foreach ($this->getFilters() as $filter => $value) {
             if (method_exists($this, $filter)) {
                 $this->$filter($value);
-            } else {
-                ($this->filtersArray[$filter])->apply($builder, $value);
+            } elseif (isset($this->filtersArray[$filter])) {
+                $this->filtersArray[$filter]->apply($builder, $value);
             }
         }
 
@@ -70,35 +64,37 @@ class Filters
 
     /**
      * Fetch all relevant filters from the request.
-     *
-     * @return array
      */
-    public function getFilters()
+    public function getFilters(): array
     {
-        return array_filter($this->request->only($this->filters));
+        return array_filter($this->request->only(array_keys($this->filtersArray)));
     }
 
     /**
      * Filter the query by a given search column.
-     *
-     * @param  string  $search
-     * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected function search($search)
+    protected function search(string $search): Builder
     {
-        $column = is_numeric($search) ? $this->request->searchNumericColumn : $this->request->searchColumn;
+        $column = is_numeric($search) 
+            ? $this->request->get('searchNumericColumn', 'id')
+            : $this->request->get('searchColumn', 'name');
 
         return $this->builder->where($column, 'LIKE', $search.'%');
     }
 
     /**
-     * Filter the query by a given column.
-     *
-     * @param  string  $column
-     * @return \Illuminate\Database\Eloquent\Builder
+     * Filter the query by a given column for ordering.
      */
-    protected function orderBy($column)
+    protected function orderBy(string $column): Builder
     {
-        return $this->builder->orderBy($column, $this->request->orderByDirection);
+        return $this->builder->orderBy($column, $this->request->get('orderByDirection', 'asc'));
+    }
+
+    /**
+     * Get the filters available for the resource.
+     */
+    protected function filters(): array
+    {
+        return [];
     }
 }
