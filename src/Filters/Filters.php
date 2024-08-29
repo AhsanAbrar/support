@@ -102,7 +102,7 @@ class Filters
     /**
      * Get the filters available for the resource.
      */
-    protected function filters(): array
+    public function filters(): array
     {
         return [];
     }
