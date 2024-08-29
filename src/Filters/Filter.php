@@ -39,7 +39,7 @@ abstract class Filter implements JsonSerializable
     /**
      * Apply the filter to the given query.
      */
-    abstract public function apply(Builder $query, $value): Builder;
+    abstract public function apply(Builder $query, $value);
 
     /**
      * Get the filter's available options.
