@@ -55,14 +55,23 @@ class UpdateEnvConfig
     /**
      * Handle Env Config.
      *
-     * @return void
+     * @return string
      */
     public function prepareValue($value)
     {
-        if (Str::contains($value, ' ')) {
-            return "'${value}'";
+        // Convert the input to a string to ensure compatibility
+        $value = (string) $value;
+
+        // Check if the value contains spaces, quotes, or other special characters
+        if (Str::contains($value, [' ', '#', '"', "'", '\\'])) {
+            // Escape special characters like double quotes and backslashes
+            $escapedValue = str_replace(['"', '\\'], ['\\"', '\\\\'], $value);
+
+            // Wrap the value in double quotes for safety
+            return "\"{$escapedValue}\"";
         }
 
+        // Return the value as-is if no special characters are found
         return $value;
     }
 }
