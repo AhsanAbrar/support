@@ -10,81 +10,99 @@ use Illuminate\Support\Str;
 trait Categorizable
 {
     /**
-     * The "booting" method of the model.
-     *
-     * @return void
+     * Boot the categorizable trait for the model.
      */
-    protected static function boot()
+    protected static function bootCategorizable(): void
     {
-        parent::boot();
-
         static::saving(function ($model) {
-            $model->parent_id = static::getId(static::$parent);
-            $model->slug = Str::slug($model->name);
+            $model->setParentIdIfNotSet();
+            $model->setSlugIfNotSet();
+            $model->setKeyIfNotSet();
         });
 
         static::addGlobalScope('parent', function (Builder $builder) {
-            $builder->whereParentId(
-                static::getId(static::$parent)
-            );
+            $builder->where('parent_id', static::getParentId());
         });
     }
 
     /**
-     * Get the meta's.
-     *
-     * @param  string  $value
-     * @return string
+     * Set the parent ID if it's not already set.
      */
-    public function getMetaAttribute($value)
+    protected function setParentIdIfNotSet(): void
     {
-        return json_decode($value);
+        if (is_null($this->parent_id)) {
+            $this->parent_id = static::getParentId();
+        }
     }
 
     /**
-     * Get the parent category id.
-     *
-     * @return int
+     * Set the slug if it's not already set.
      */
-    public static function parentId()
+    protected function setSlugIfNotSet(): void
     {
-        return static::getId(static::$parent);
+        if (empty($this->slug)) {
+            $this->slug = Str::slug($this->name);
+        }
     }
 
     /**
-     * Get the category id with key.
-     *
-     * @param  string  $key
-     * @return int
+     * Set the key if it's not already set.
      */
-    public static function getId($key)
+    protected function setKeyIfNotSet(): void
     {
-        return Cache::rememberForever('category:'.Str::slug($key), function () use ($key) {
-            return optional(DB::table('categories')->whereKey($key)->first())->id;
+        if (empty($this->key)) {
+            $this->key = $this->name;
+        }
+    }
+
+    /**
+     * Get the parent category ID.
+     */
+    public static function getParentId(): ?int
+    {
+        return Cache::rememberForever(static::getParentCacheKey(), function () {
+            return DB::table(static::getTableName())
+                ->where('key', static::$parent)
+                ->value('id');
         });
     }
 
     /**
-     * Get options.
-     *
-     * @param  Builder  $query
-     * @return Builder
+     * Get the category ID based on key.
      */
-    public function scopeOptions($query)
+    public static function getId(string $key): ?int
     {
-        return $query->get(['id as value', 'name as label']);
+        $parentId = static::getParentId();
+
+        return Cache::rememberForever(static::getCategoryCacheKey($key), function () use ($key, $parentId) {
+            return DB::table(static::getTableName())
+                ->where('key', $key)
+                ->where('parent_id', $parentId)
+                ->value('id');
+        });
     }
 
     /**
-     * Scope a query to only include specified parent categories.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder
+     * Get the cache key for a specific category by key and parent.
      */
-    public function scopeParent($query, $parent)
+    protected static function getCategoryCacheKey(string $key): string
     {
-        return $query->whereParentId(
-            $this->getId($parent)
-        );
+        return static::getParentCacheKey().':'.Str::slug($key);
+    }
+
+    /**
+     * Get the cache key for the parent category.
+     */
+    protected static function getParentCacheKey(): string
+    {
+        return 'category:'.Str::slug(static::$parent);
+    }
+
+    /**
+     * Get the table name for categories.
+     */
+    public static function getTableName(): string
+    {
+        return (new static)->getTable();
     }
 }
