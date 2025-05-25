@@ -12,7 +12,7 @@ if (! function_exists('option')) {
      * @param  array|string|null  $default
      * @return mixed|\AhsanDev\Support\Option
      */
-    function option(string|array $key = null, string|array $default = null)
+    function option(string|array|null $key = null, string|array|null $default = null)
     {
         if (is_null($key)) {
             return app('option');
